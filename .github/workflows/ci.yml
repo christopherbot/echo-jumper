@@ -9,17 +9,30 @@ on:
   pull_request:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Install dependencies
         run: npm install
       - name: Build
-        run: npm run build
+        run: |
+          ls
+          npm run build
+          ls
+      # - name: Upload dist
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: dist-${{ github.sha }}
+      #     path: dist
 
   # typecheck:
   #   runs-on: ubuntu-latest
