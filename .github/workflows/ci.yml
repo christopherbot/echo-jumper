@@ -64,9 +64,9 @@ jobs:
         with:
           fetch-depth: 0
       - run: npm install
-      # - uses: actions/download-artifact@v3
-      #   with:
-      #     name: dist-${{ github.sha }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: dist-${{ github.sha }}
       - name: Deploy
         # uses: JamesIves/github-pages-deploy-action@v4
         # with:
