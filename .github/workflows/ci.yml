@@ -24,15 +24,12 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build
-        run: |
-          ls
-          npm run build
-          ls
-      # - name: Upload dist
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: dist-${{ github.sha }}
-      #     path: dist
+        run: npm run build
+      - name: Upload dist
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-${{ github.sha }}
+          path: dist
 
   # typecheck:
   #   runs-on: ubuntu-latest
@@ -67,6 +64,9 @@ jobs:
         with:
           fetch-depth: 0
       - run: npm install
+      # - uses: actions/download-artifact@v3
+      #   with:
+      #     name: dist-${{ github.sha }}
       - name: Deploy
         # uses: JamesIves/github-pages-deploy-action@v4
         # with:
