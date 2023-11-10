@@ -4,6 +4,11 @@
   "version": "1.0.0",
   "author": "Chris Bot <chrisadambot@gmail.com>",
   "scripts": {
+    "eslint": "eslint src",
+    "prettier": "prettier ./src",
+    "fmt": "npm run prettier -- --write",
+    "lint": "npm run eslint && npm run prettier -- --check",
+    "typecheck": "tsc --noEmit",
     "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
