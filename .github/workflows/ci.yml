@@ -55,9 +55,12 @@ jobs:
           fetch-depth: 0
       - run: npm install
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@4.1.1
-        with:
-          # The branch the action should deploy to
-          branch: gh-pages
-          # The folder the action should deploy
-          folder: dist
+        # uses: JamesIves/github-pages-deploy-action@v4
+        # with:
+        #   # The branch the action should deploy to
+        #   branch: gh-pages
+        #   # The folder the action should deploy
+        #   folder: dist
+        run: |
+          echo "looking.."
+          ls
