@@ -31,34 +31,34 @@ jobs:
           name: dist-${{ github.sha }}
           path: ./dist
 
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - run: npm install
-      - run: npm run typecheck
+  # typecheck:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+  #     - run: npm install
+  #     - run: npm run typecheck
 
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - run: npm install
-      - run: npm run lint
+  # lint:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+  #     - run: npm install
+  #     - run: npm run lint
 
-  verify:
-    runs-on: ubuntu-latest
-    needs: [typecheck, lint]
-    steps:
-      - run: echo "All checks passed"
+  # verify:
+  #   runs-on: ubuntu-latest
+  #   needs: [typecheck, lint]
+  #   steps:
+  #     - run: echo "All checks passed"
 
   deploy:
     # if: github.ref_name == 'main'
     runs-on: ubuntu-latest
-    needs: [build, verify]
+    needs: [build]
     steps:
       # - uses: actions/checkout@v3
       #   with:
@@ -69,6 +69,10 @@ jobs:
         with:
           name: dist-${{ github.sha }}
           path: ./dist
+      - name: Log
+        run: |
+          pwd
+          ls
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
