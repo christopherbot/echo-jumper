@@ -1,3 +1,4 @@
+/* eslint-disable canonical/filename-match-exported */
 import 'phaser'
 
 import HelloWorld from './scenes/HelloWorld'

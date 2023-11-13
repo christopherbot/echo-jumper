@@ -15,7 +15,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "phaser": "^3.60.0"
+    "phaser": "^3.70.0"
   },
   "devDependencies": {
     "@types/node": "^20.8.10",
@@ -23,6 +23,7 @@
     "@typescript-eslint/parser": "^6.9.1",
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-canonical": "^4.15.1",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-import-alias": "^1.2.0",
     "prettier": "^3.0.3",

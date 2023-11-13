@@ -21,7 +21,7 @@ const config = {
     project: './tsconfig.json',
   },
   ignorePatterns: ['.eslintrc.cjs'],
-  plugins: ['@typescript-eslint', 'import', 'import-alias'],
+  plugins: ['@typescript-eslint', 'import', 'import-alias', 'canonical'],
   rules: {
     'no-multiple-empty-lines': 'error',
     'import/prefer-default-export': 'error',
@@ -59,7 +59,17 @@ const config = {
         'newlines-between': 'always',
       },
     ],
+    // https://github.com/gajus/eslint-plugin-canonical
+    'canonical/filename-match-exported': 'error',
   },
+  overrides: [
+    {
+      files: 'index.ts',
+      rules: {
+        'import/prefer-default-export': 'off',
+      },
+    },
+  ],
 }
 
 module.exports = config
