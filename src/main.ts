@@ -1,7 +1,8 @@
 /* eslint-disable canonical/filename-match-exported */
 import 'phaser'
+import TCRPPlugin from 'phaser3-rex-plugins/plugins/arcadetcrp-plugin.js'
 
-import HelloWorld from './scenes/HelloWorld'
+import { Game } from './scenes'
 
 const config: Phaser.Types.Core.GameConfig = {
   title: 'Github Game Off 2023',
@@ -10,15 +11,24 @@ const config: Phaser.Types.Core.GameConfig = {
   width: 800,
   height: 600,
   backgroundColor: '#300000',
-  scene: [HelloWorld],
+  scene: [Game],
   render: { pixelArt: false, antialias: true },
   canvasStyle: `margin: 0;`,
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 200 },
+      gravity: { y: 1000 },
       debug: false,
     },
+  },
+  plugins: {
+    global: [
+      {
+        key: 'rexTCRP',
+        plugin: TCRPPlugin,
+        start: true,
+      },
+    ],
   },
   input: {
     keyboard: true,

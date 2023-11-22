@@ -1,8 +1,12 @@
+import { Player } from '@src/entities'
+
 import BaseScene from './BaseScene'
 
-class HelloWorld extends BaseScene {
+class Game extends BaseScene {
+  private player!: Phaser.GameObjects.Sprite
+
   constructor() {
-    super('helloworld')
+    super('game')
   }
 
   preload() {}
@@ -24,9 +28,13 @@ class HelloWorld extends BaseScene {
       )
       .setOrigin(0.5, 0.5)
       .setPadding(5)
+
+    this.player = new Player(this, 300, 650, '')
   }
 
-  update() {}
+  update() {
+    this.player.update()
+  }
 }
 
-export default HelloWorld
+export default Game
