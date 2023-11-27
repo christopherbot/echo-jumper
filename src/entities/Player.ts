@@ -1,42 +1,81 @@
-import { Controls, Replay } from '@src/components'
+import {
+  Controls,
+  type ControlsOptions,
+  // Replay
+} from '@src/components'
 
-import Actor from './Actor'
+import Character from './Character'
 
-class Player extends Actor {
-  private readonly velocityX = 250
-  private readonly velocityY = 470
-
+class Player extends Character {
   constructor(
     scene: Phaser.Scene,
     x: number,
     y: number,
-    texture: string,
+    controlsOptions: ControlsOptions,
     frame?: string | number,
   ) {
-    super(scene, x, y, texture, frame)
+    // TODO texture
+    super(scene, x, y, '', frame)
 
     const controls = new Controls(scene, {
-      onUp: () => {
-        this._body.setVelocityY(-this.velocityY)
+      up: {
+        down: () => {
+          this.jump()
+          controlsOptions.up.down()
+        },
+        up: () => {
+          controlsOptions.up.up()
+        },
+        pressed: () => {
+          controlsOptions.up.pressed()
+        },
       },
-      onDown: () => {
-        this._body.setVelocityY(100)
+      down: {
+        down: () => {
+          controlsOptions.down.down()
+        },
+        up: () => {
+          controlsOptions.down.up()
+        },
+        pressed: () => {
+          this.fall()
+          controlsOptions.down.pressed()
+        },
       },
-      onLeft: () => {
-        this._body.setVelocityX(-this.velocityX)
+      left: {
+        down: () => {
+          controlsOptions.left.down()
+        },
+        up: () => {
+          controlsOptions.left.up()
+        },
+        pressed: () => {
+          this.moveLeft()
+          controlsOptions.left.pressed()
+        },
       },
-      onRight: () => {
-        this._body.setVelocityX(this.velocityX)
+      right: {
+        down: () => {
+          controlsOptions.right.down()
+        },
+        up: () => {
+          controlsOptions.right.up()
+        },
+        pressed: () => {
+          this.moveRight()
+          controlsOptions.right.pressed()
+        },
       },
-      onNeutral: () => {
-        this._body.setVelocityX(0)
+      onHorizontalNeutral: () => {
+        this.stopMovingX()
+        controlsOptions.onHorizontalNeutral()
       },
     })
 
-    const replay = new Replay(scene)
+    // const replay = new Replay(scene)
 
     this.addComponent(controls)
-    this.addComponent(replay)
+    // this.addComponent(replay)
   }
 
   update() {

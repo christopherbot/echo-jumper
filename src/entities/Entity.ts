@@ -1,4 +1,4 @@
-import type Component from '@src/components'
+import type { Component } from '@src/components'
 
 class Entity extends Phaser.Physics.Arcade.Sprite {
   components: Map<string, Component> = new Map()

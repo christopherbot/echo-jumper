@@ -1,2 +1,2 @@
-export { default as Controls } from './Controls'
-export { default as Replay } from './Replay'
+export { default as Controls, type ControlsOptions } from './Controls'
+export { default as Component } from './Component'

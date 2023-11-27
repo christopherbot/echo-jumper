@@ -2,12 +2,27 @@ import { removeNil } from '@src/utils'
 
 import type Component from './Component'
 
-interface Options {
-  onUp: () => void
-  onDown: () => void
-  onLeft: () => void
-  onRight: () => void
-  onNeutral: () => void
+interface KeyOptions {
+  /**
+   * Fires once when the key is pressed down
+   */
+  down: () => void
+  /**
+   * Fires once when the key is released
+   */
+  up: () => void
+  /**
+   * Fires continuously when the key is held down
+   */
+  pressed: () => void
+}
+
+export interface ControlsOptions {
+  up: KeyOptions
+  down: KeyOptions
+  left: KeyOptions
+  right: KeyOptions
+  onHorizontalNeutral: () => void
 }
 
 class Controls implements Component {
@@ -19,9 +34,9 @@ class Controls implements Component {
   private keyS: Phaser.Input.Keyboard.Key | null = null
   private keyD: Phaser.Input.Keyboard.Key | null = null
 
-  options: Options
+  options: ControlsOptions
 
-  constructor(scene: Phaser.Scene, options: Options) {
+  constructor(scene: Phaser.Scene, options: ControlsOptions) {
     if (scene.input.keyboard) {
       this.cursors = scene.input.keyboard.createCursorKeys()
       this.keyW = scene.input.keyboard.addKey('W')
@@ -31,6 +46,8 @@ class Controls implements Component {
     }
 
     this.options = options
+
+    this.setupKeyListeners()
   }
 
   private get upKeys() {
@@ -57,28 +74,72 @@ class Controls implements Component {
     return keys.some((key) => Phaser.Input.Keyboard.JustDown(key))
   }
 
+  private setupKeyListeners() {
+    this.upKeys.forEach((upKey) => {
+      upKey
+        .on('down', () => {
+          this.options.up.down()
+        })
+        .on('up', () => {
+          this.options.up.up()
+        })
+    })
+
+    this.downKeys.forEach((downKey) => {
+      downKey
+        .on('down', () => {
+          this.options.down.down()
+        })
+        .on('up', () => {
+          this.options.down.up()
+        })
+    })
+
+    this.leftKeys.forEach((leftKey) => {
+      leftKey
+        .on('down', () => {
+          this.options.left.down()
+        })
+        .on('up', () => {
+          this.options.left.up()
+        })
+    })
+
+    this.rightKeys.forEach((rightKey) => {
+      rightKey
+        .on('down', () => {
+          this.options.right.down()
+        })
+        .on('up', () => {
+          this.options.right.up()
+        })
+    })
+  }
+
   update() {
     if (this.isSomeKeyJustDown(this.upKeys)) {
-      this.options.onUp()
+      this.options.up.down()
     }
 
     if (this.isSomeKeyDown(this.downKeys)) {
-      this.options.onDown()
+      this.options.down.pressed()
     }
 
-    if (
-      !this.isSomeKeyDown(this.leftKeys) &&
-      !this.isSomeKeyDown(this.rightKeys)
-    ) {
-      this.options.onNeutral()
-    }
+    const isLeftPressed = this.isSomeKeyDown(this.leftKeys)
+    const isRightPressed = this.isSomeKeyDown(this.rightKeys)
+    const areLeftAndRightBothPressed = isLeftPressed && isRightPressed
+    const areLeftAndRightBothUnpressed = !isLeftPressed && !isRightPressed
 
-    if (this.isSomeKeyDown(this.leftKeys)) {
-      this.options.onLeft()
-    }
+    if (areLeftAndRightBothPressed || areLeftAndRightBothUnpressed) {
+      this.options.onHorizontalNeutral()
+    } else {
+      if (isLeftPressed) {
+        this.options.left.pressed()
+      }
 
-    if (this.isSomeKeyDown(this.rightKeys)) {
-      this.options.onRight()
+      if (isRightPressed) {
+        this.options.right.pressed()
+      }
     }
   }
 }
