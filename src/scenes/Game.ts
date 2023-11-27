@@ -11,7 +11,7 @@ class Game extends BaseScene {
   private player!: Player
   // private replays: Character[] = []
   private replays!: Phaser.Physics.Arcade.Group
-  private replayPosition: { x: number; y: number } = { x: 0, y: 0 }
+  private replayStartPosition: { x: number; y: number } = { x: 0, y: 0 }
 
   private tcrpRecorder!: TcrpRecorder
   private tcrpPlayer!: TcrpPlayer
@@ -162,7 +162,7 @@ class Game extends BaseScene {
     const spaceKey = this.input.keyboard?.addKey('SPACE')
     spaceKey?.on('down', () => {
       if (!this.tcrpRecorder.isRecording) {
-        this.replayPosition = { x: this.player.x, y: this.player.y }
+        this.replayStartPosition = { x: this.player.x, y: this.player.y }
         this.tcrpRecorder.start()
 
         // const command = ['stopMovingX']
@@ -183,8 +183,8 @@ class Game extends BaseScene {
 
         const replay = new Character(
           this,
-          this.replayPosition.x,
-          this.replayPosition.y,
+          this.replayStartPosition.x,
+          this.replayStartPosition.y,
           '',
         )
         // replay.setPushable(true)
