@@ -48,7 +48,7 @@ class Game extends BaseScene {
         down: () => {},
         up: () => {},
         pressed: () => {
-          this.currentReplayer?.addCommand('fall')
+          this.currentReplayer?.addCommand('onDown')
         },
       },
       left: {

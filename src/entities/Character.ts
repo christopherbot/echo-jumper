@@ -48,7 +48,7 @@ class Character extends Actor {
     this._body.setVelocityY(-this.velocityY)
   }
 
-  fall() {
+  onDown() {
     this._body.setVelocityY(750)
   }
 

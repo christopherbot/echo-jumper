@@ -33,7 +33,7 @@ class Player extends Character {
           controlsOptions.down.up()
         },
         pressed: () => {
-          this.fall()
+          this.onDown()
           controlsOptions.down.pressed()
         },
       },
