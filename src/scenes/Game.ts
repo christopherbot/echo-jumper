@@ -12,6 +12,8 @@ class Game extends BaseScene {
   private replays!: Phaser.Physics.Arcade.Group
   private replayStartPosition: { x: number; y: number } = { x: 0, y: 0 }
 
+  private recordingText: Phaser.GameObjects.Text | null = null
+
   constructor() {
     super('game')
   }
@@ -99,8 +101,10 @@ class Game extends BaseScene {
     spaceKey?.on('down', () => {
       if (!this.currentReplayer) {
         this.startRecording()
+        this.recordingText = this.add.text(6, 20, 'Recording')
       } else {
         this.endRecordingAndStartReplay()
+        this.recordingText?.destroy()
       }
     })
   }
