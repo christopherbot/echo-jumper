@@ -4,7 +4,11 @@ import type Recorder from 'phaser3-rex-plugins/plugins/logic/runcommands/arcadet
 
 import type { OnlyClassMethods } from '@src/utils'
 
-class Replay<T extends object> {
+interface ReplayOptions {
+  onLoopComplete: () => void
+}
+
+class Replayer<T extends object> {
   // Note: The TCRPPlugin also has a StepRunner class that is used in the
   // rex examples to sync the commands being added during recording with
   // the game world step counter. We don't need to use it this because the
@@ -16,11 +20,6 @@ class Replay<T extends object> {
     const tcrpPlugin = scene.plugins.get('rexTCRP') as TCRPPlugin
     this.recorder = tcrpPlugin.addRecorder(scene)
     this.player = tcrpPlugin.addPlayer(scene)
-
-    // continuously loop the replay
-    this.player.on('complete', () => {
-      this.player.start()
-    })
   }
 
   startRecording() {
@@ -37,9 +36,21 @@ class Replay<T extends object> {
     }
   }
 
-  startReplay(scope: T) {
+  startReplay(scope: T, options: ReplayOptions) {
     const commands = this.recorder.getCommands()
-    this.player.load(commands, scope).start()
+    this.player.load(commands, scope)
+    this.player.start()
+
+    // continuously loop the replay
+    this.player.on('complete', () => {
+      options.onLoopComplete()
+      this.player.start()
+    })
+  }
+
+  stopReplay() {
+    this.player.stop()
+    this.player.off('complete')
   }
 
   get isRecording() {
@@ -49,6 +60,11 @@ class Replay<T extends object> {
   get isReplaying() {
     return this.player.isPlaying
   }
+
+  teardown() {
+    this.stopRecording()
+    this.stopReplay()
+  }
 }
 
-export default Replay
+export default Replayer

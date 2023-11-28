@@ -1,8 +1,4 @@
-import {
-  Controls,
-  type ControlsOptions,
-  // Replay
-} from '@src/components'
+import { Controls, type ControlsOptions } from '@src/components'
 
 import Character from './Character'
 
@@ -12,10 +8,9 @@ class Player extends Character {
     x: number,
     y: number,
     controlsOptions: ControlsOptions,
-    frame?: string | number,
   ) {
-    // TODO texture
-    super(scene, x, y, '', frame)
+    // TODO ability
+    super(scene, x, y, 'double jump')
 
     const controls = new Controls(scene, {
       up: {
@@ -72,10 +67,7 @@ class Player extends Character {
       },
     })
 
-    // const replay = new Replay(scene)
-
     this.addComponent(controls)
-    // this.addComponent(replay)
   }
 
   update() {

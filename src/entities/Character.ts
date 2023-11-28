@@ -1,19 +1,39 @@
+import { assertNever } from '@src/utils'
+
 import Actor from './Actor'
 
+type Ability =
+  | 'double jump'
+  | 'pogo'
+  | 'top bumper'
+  | 'left right bumpers'
+  | 'horizontal stretch'
+  | 'anti gravity'
+
 class Character extends Actor {
+  private startPosition = { x: 0, y: 0 }
   private readonly velocityX = 250
   private readonly velocityY = 470
-  private readonly accelerationX = 2000
-  private readonly accelerationY = 470
 
-  constructor(
-    scene: Phaser.Scene,
-    x: number,
-    y: number,
-    texture: string,
-    frame?: string | number,
-  ) {
-    super(scene, x, y, texture, frame)
+  constructor(scene: Phaser.Scene, x: number, y: number, ability: Ability) {
+    const texture = (() => {
+      // TODO
+      switch (ability) {
+        case 'double jump':
+        case 'pogo':
+        case 'top bumper':
+        case 'left right bumpers':
+        case 'horizontal stretch':
+        case 'anti gravity':
+          return ''
+        default:
+          assertNever(ability, `Unhandled ability: ${ability}`)
+      }
+    })()
+
+    super(scene, x, y, texture)
+
+    this.startPosition = { x, y }
 
     // TODO create anims for:
     // idle, run, jump, hit
@@ -24,30 +44,37 @@ class Character extends Actor {
 
   noop() {}
 
-  // double jump
   jump() {
     this._body.setVelocityY(-this.velocityY)
   }
 
-  // stretch (horiz, vert)
-  // pogo jump
   fall() {
     this._body.setVelocityY(750)
-    // this._body.setAccelerationY(4000)
   }
 
   moveLeft() {
-    // this._body.setAccelerationX(-this.accelerationX)
     this._body.setVelocityX(-this.velocityX)
   }
 
   moveRight() {
-    // this._body.setAccelerationX(this.accelerationX)
     this._body.setVelocityX(this.velocityX)
   }
 
+  stopMoving() {
+    this._body.setVelocity(0)
+  }
+
   stopMovingX() {
-    this._body.setVelocityX(0) //.setAccelerationX(0)
+    this._body.setVelocityX(0)
+  }
+
+  resetPosition() {
+    this._body.reset(this.startPosition.x, this.startPosition.y)
+  }
+
+  teardown() {
+    // this.resetPosition()
+    // this.destroy()
   }
 }
 

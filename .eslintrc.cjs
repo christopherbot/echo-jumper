@@ -25,6 +25,7 @@ const config = {
   rules: {
     '@typescript-eslint/consistent-type-assertions': 'error',
     '@typescript-eslint/consistent-type-imports': 'error',
+    '@typescript-eslint/restrict-template-expressions': 'off',
     'no-multiple-empty-lines': 'error',
     'import/prefer-default-export': 'error',
     'import/newline-after-import': 'error',
