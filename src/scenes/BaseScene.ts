@@ -46,10 +46,6 @@ class BaseScene extends Phaser.Scene {
     }
   }
 
-  protected createCursorKeys(): Phaser.Types.Input.Keyboard.CursorKeys | null {
-    return this.input.keyboard?.createCursorKeys() ?? null
-  }
-
   protected drawBorder(x: number, y: number, width: number, height: number) {
     this.add
       .rectangle(x, y, width, height)

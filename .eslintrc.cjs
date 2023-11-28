@@ -23,6 +23,9 @@ const config = {
   ignorePatterns: ['.eslintrc.cjs'],
   plugins: ['@typescript-eslint', 'import', 'import-alias', 'canonical'],
   rules: {
+    '@typescript-eslint/consistent-type-assertions': 'error',
+    '@typescript-eslint/consistent-type-imports': 'error',
+    '@typescript-eslint/restrict-template-expressions': 'off',
     'no-multiple-empty-lines': 'error',
     'import/prefer-default-export': 'error',
     'import/newline-after-import': 'error',
