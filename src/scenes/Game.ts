@@ -3,12 +3,12 @@ import { Character, Player } from '@src/entities'
 
 import BaseScene from './BaseScene'
 
-type CharacterReplay = Replayer<Character>
+type CharacterReplayer = Replayer<Character>
 
 class Game extends BaseScene {
   private player!: Player
-  private replayers: CharacterReplay[] = []
-  private currentReplayer: CharacterReplay | null = null
+  private replayers: CharacterReplayer[] = []
+  private currentReplayer: CharacterReplayer | null = null
   private replays!: Phaser.Physics.Arcade.Group
   private replayStartPosition: { x: number; y: number } = { x: 0, y: 0 }
 
