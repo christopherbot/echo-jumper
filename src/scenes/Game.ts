@@ -1,5 +1,6 @@
 import { Replayer } from '@src/classes'
 import { Character, Player } from '@src/entities'
+import type { Ability } from '@src/entities/Ability'
 
 import BaseScene from './BaseScene'
 
@@ -7,6 +8,7 @@ type CharacterReplayer = Replayer<Character>
 
 class Game extends BaseScene {
   private player!: Player
+  private currentAbility: Ability = 'horizontal stretch'
   private replayers: CharacterReplayer[] = []
   private currentReplayer: CharacterReplayer | null = null
   private replays!: Phaser.Physics.Arcade.Group
@@ -40,7 +42,7 @@ class Game extends BaseScene {
       .setOrigin(0.5, 0.5)
       .setPadding(5)
 
-    this.player = new Player(this, 50, 500, 'double jump', {
+    this.player = new Player(this, 50, 500, this.currentAbility, {
       up: {
         down: () => {
           this.currentReplayer?.addCommand('jump')
@@ -49,11 +51,11 @@ class Game extends BaseScene {
         pressed: () => {},
       },
       down: {
-        down: () => {},
-        up: () => {},
-        pressed: () => {
+        down: () => {
           this.currentReplayer?.addCommand('onDown')
         },
+        up: () => {},
+        pressed: () => {},
       },
       left: {
         down: () => {},
@@ -105,6 +107,7 @@ class Game extends BaseScene {
         this.startRecording()
         this.recordingText = this.add.text(6, 20, 'Recording')
       } else {
+        this.player.resetHorizontalStretch()
         this.endRecordingAndStartReplay()
         this.recordingText?.destroy()
       }
@@ -142,7 +145,7 @@ class Game extends BaseScene {
       this,
       this.replayStartPosition.x,
       this.replayStartPosition.y,
-      'double jump',
+      this.currentAbility,
     )
 
     // replay.setPushable(true)
@@ -152,7 +155,7 @@ class Game extends BaseScene {
 
     currentReplayer.startReplay(replay, {
       onLoopComplete: () => {
-        replay.resetPosition()
+        replay.reset()
       },
     })
 

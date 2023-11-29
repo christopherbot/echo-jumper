@@ -5,6 +5,10 @@ import Actor from './Actor'
 
 class Character extends Actor {
   private startPosition = { x: 0, y: 0 }
+  private isHorizontallyStretched = false
+  private horizontalStretchTween: Phaser.Tweens.Tween | null = null
+
+  protected ability: Ability
   private readonly velocityX = 250
   private readonly velocityY = 470
 
@@ -26,6 +30,8 @@ class Character extends Actor {
 
     super(scene, x, y, texture)
 
+    this.ability = ability
+
     this.startPosition = { x, y }
 
     // TODO create anims for:
@@ -42,14 +48,52 @@ class Character extends Actor {
   }
 
   onDown() {
-    this._body.setVelocityY(750)
+    switch (this.ability) {
+      case 'horizontal stretch': {
+        this.horizontalStretchTween?.stop()
+
+        if (this.isHorizontallyStretched) {
+          this.resetStretchProperties()
+
+          this.horizontalStretchTween = this.scene.tweens.add({
+            targets: this,
+            scaleX: 1,
+            scaleY: 1,
+            duration: 150,
+            ease: 'Cubic.easeIn',
+          })
+        } else {
+          this.onStretch()
+
+          this.horizontalStretchTween = this.scene.tweens.add({
+            targets: this,
+            scaleX: 10,
+            scaleY: 0.65,
+            duration: 150,
+            ease: 'Cubic.easeIn',
+          })
+        }
+
+        break
+      }
+      default: {
+        this._body.setVelocityY(750)
+        break
+      }
+    }
   }
 
   moveLeft() {
+    if (this.isHorizontallyStretched) {
+      return
+    }
     this._body.setVelocityX(-this.velocityX)
   }
 
   moveRight() {
+    if (this.isHorizontallyStretched) {
+      return
+    }
     this._body.setVelocityX(this.velocityX)
   }
 
@@ -61,8 +105,34 @@ class Character extends Actor {
     this._body.setVelocityX(0)
   }
 
+  resetScale() {
+    this.horizontalStretchTween?.stop()
+    this.horizontalStretchTween = null
+    this.setScale(1)
+  }
+
   resetPosition() {
     this._body.reset(this.startPosition.x, this.startPosition.y)
+  }
+
+  onStretch() {
+    this.isHorizontallyStretched = true
+    this._body.setAllowGravity(false)
+    this._body.setImmovable(true)
+    this.stopMoving()
+  }
+
+  resetStretchProperties() {
+    this.isHorizontallyStretched = false
+    this._body.setAllowGravity(true)
+    this._body.setImmovable(false)
+  }
+
+  reset() {
+    // TODO: before reseting, leave a fading out replica?
+    this.resetScale()
+    this.resetPosition()
+    this.resetStretchProperties()
   }
 
   teardown() {

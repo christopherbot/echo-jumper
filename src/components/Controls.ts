@@ -121,9 +121,9 @@ class Controls implements Component {
     //   this.options.up.down()
     // }
 
-    if (this.isSomeKeyDown(this.downKeys)) {
-      this.options.down.pressed()
-    }
+    // if (this.isSomeKeyDown(this.downKeys)) {
+    //   this.options.down.pressed()
+    // }
 
     const isLeftPressed = this.isSomeKeyDown(this.leftKeys)
     const isRightPressed = this.isSomeKeyDown(this.rightKeys)

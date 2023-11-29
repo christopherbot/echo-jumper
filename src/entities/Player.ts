@@ -4,7 +4,6 @@ import type { Ability } from './Ability'
 import Character from './Character'
 
 class Player extends Character {
-  private ability: Ability
   private hasDoubleJumped = false
 
   constructor(
@@ -15,8 +14,6 @@ class Player extends Character {
     controlsOptions: ControlsOptions,
   ) {
     super(scene, x, y, ability)
-
-    this.ability = ability
 
     const controls = new Controls(scene, {
       up: {
@@ -39,13 +36,13 @@ class Player extends Character {
       },
       down: {
         down: () => {
+          this.onDown()
           controlsOptions.down.down()
         },
         up: () => {
           controlsOptions.down.up()
         },
         pressed: () => {
-          this.onDown()
           controlsOptions.down.pressed()
         },
       },
@@ -88,6 +85,11 @@ class Player extends Character {
 
   private get canDoubleJump() {
     return this.ability === 'double jump' && !this.hasDoubleJumped
+  }
+
+  resetHorizontalStretch() {
+    this.resetScale()
+    this.resetStretchProperties()
   }
 
   update() {
