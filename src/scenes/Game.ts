@@ -1,5 +1,6 @@
 import { Replayer } from '@src/classes'
 import { Character, Player } from '@src/entities'
+import type { Ability } from '@src/entities/Ability'
 
 import BaseScene from './BaseScene'
 
@@ -7,6 +8,7 @@ type CharacterReplayer = Replayer<Character>
 
 class Game extends BaseScene {
   private player!: Player
+  private currentAbilities: Ability[] = ['triple jump', 'horizontal stretch']
   private replayers: CharacterReplayer[] = []
   private currentReplayer: CharacterReplayer | null = null
   private replays!: Phaser.Physics.Arcade.Group
@@ -21,6 +23,10 @@ class Game extends BaseScene {
   preload() {}
 
   create() {
+    // To prevent jitters when the player is on top of a replay
+    // see: https://github.com/photonstorm/phaser/pull/4989
+    this.physics.world.fixedStep = false
+
     this.drawGrid({
       x: 0,
       y: 0,
@@ -38,7 +44,7 @@ class Game extends BaseScene {
       .setOrigin(0.5, 0.5)
       .setPadding(5)
 
-    this.player = new Player(this, 50, 500, {
+    this.player = new Player(this, 50, 500, this.currentAbilities, {
       up: {
         down: () => {
           this.currentReplayer?.addCommand('jump')
@@ -47,11 +53,11 @@ class Game extends BaseScene {
         pressed: () => {},
       },
       down: {
-        down: () => {},
-        up: () => {},
-        pressed: () => {
+        down: () => {
           this.currentReplayer?.addCommand('onDown')
         },
+        up: () => {},
+        pressed: () => {},
       },
       left: {
         down: () => {},
@@ -103,6 +109,7 @@ class Game extends BaseScene {
         this.startRecording()
         this.recordingText = this.add.text(6, 20, 'Recording')
       } else {
+        this.player.resetHorizontalStretch()
         this.endRecordingAndStartReplay()
         this.recordingText?.destroy()
       }
@@ -140,7 +147,7 @@ class Game extends BaseScene {
       this,
       this.replayStartPosition.x,
       this.replayStartPosition.y,
-      'double jump',
+      this.currentAbilities,
     )
 
     // replay.setPushable(true)
@@ -150,7 +157,7 @@ class Game extends BaseScene {
 
     currentReplayer.startReplay(replay, {
       onLoopComplete: () => {
-        replay.resetPosition()
+        replay.reset()
       },
     })
 

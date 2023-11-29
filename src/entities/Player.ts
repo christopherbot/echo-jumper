@@ -1,22 +1,36 @@
 import { Controls, type ControlsOptions } from '@src/components'
 
+import type { Ability } from './Ability'
 import Character from './Character'
 
 class Player extends Character {
+  private hasDoubleJumped = false
+  private hasTripleJumped = false
+
   constructor(
     scene: Phaser.Scene,
     x: number,
     y: number,
+    abilities: Ability[],
     controlsOptions: ControlsOptions,
   ) {
-    // TODO ability
-    super(scene, x, y, 'double jump')
+    super(scene, x, y, abilities)
 
     const controls = new Controls(scene, {
       up: {
         down: () => {
-          this.jump()
-          controlsOptions.up.down()
+          if (this.isTouchingDown || this.canDoubleJump || this.canTripleJump) {
+            if (!this.isTouchingDown) {
+              if (this.hasDoubleJumped) {
+                this.hasTripleJumped = true
+              } else {
+                this.hasDoubleJumped = true
+              }
+            }
+
+            this.jump()
+            controlsOptions.up.down()
+          }
         },
         up: () => {
           controlsOptions.up.up()
@@ -27,13 +41,13 @@ class Player extends Character {
       },
       down: {
         down: () => {
+          this.onDown()
           controlsOptions.down.down()
         },
         up: () => {
           controlsOptions.down.up()
         },
         pressed: () => {
-          this.onDown()
           controlsOptions.down.pressed()
         },
       },
@@ -70,8 +84,37 @@ class Player extends Character {
     this.addComponent(controls)
   }
 
+  private get isTouchingDown() {
+    return this._body.onFloor() || this._body.touching.down
+  }
+
+  private get canDoubleJump() {
+    return (
+      (this.abilities.includes('double jump') ||
+        this.abilities.includes('triple jump')) &&
+      !this.hasDoubleJumped
+    )
+  }
+
+  private get canTripleJump() {
+    return this.abilities.includes('triple jump') && !this.hasTripleJumped
+  }
+
+  resetHorizontalStretch() {
+    this.resetScale()
+    this.resetStretchProperties()
+  }
+
   update() {
     super.update()
+
+    if (this.hasDoubleJumped && this.isTouchingDown) {
+      this.hasDoubleJumped = false
+    }
+
+    if (this.hasTripleJumped && this.isTouchingDown) {
+      this.hasTripleJumped = false
+    }
   }
 }
 
