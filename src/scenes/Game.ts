@@ -21,6 +21,8 @@ class Game extends BaseScene {
   preload() {}
 
   create() {
+    this.physics.world.fixedStep = false
+
     this.drawGrid({
       x: 0,
       y: 0,
