@@ -1,14 +1,7 @@
 import { assertNever } from '@src/utils'
 
+import type { Ability } from './Ability'
 import Actor from './Actor'
-
-export type Ability =
-  | 'double jump'
-  | 'pogo'
-  | 'top bumper'
-  | 'left right bumpers'
-  | 'horizontal stretch'
-  | 'anti gravity'
 
 class Character extends Actor {
   private startPosition = { x: 0, y: 0 }

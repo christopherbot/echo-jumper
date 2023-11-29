@@ -1,6 +1,7 @@
 import { Controls, type ControlsOptions } from '@src/components'
 
-import Character, { type Ability } from './Character'
+import type { Ability } from './Ability'
+import Character from './Character'
 
 class Player extends Character {
   private ability: Ability
