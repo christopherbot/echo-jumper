@@ -1,4 +1,4 @@
-import { assertNever } from '@src/utils'
+// import { assertNever } from '@src/utils'
 
 import type { Ability } from './Ability'
 import Actor from './Actor'
@@ -8,29 +8,31 @@ class Character extends Actor {
   private isHorizontallyStretched = false
   private horizontalStretchTween: Phaser.Tweens.Tween | null = null
 
-  protected ability: Ability
+  protected abilities: Ability[]
   private readonly velocityX = 250
   private readonly velocityY = 470
 
-  constructor(scene: Phaser.Scene, x: number, y: number, ability: Ability) {
+  constructor(scene: Phaser.Scene, x: number, y: number, abilities: Ability[]) {
     const texture = (() => {
       // TODO
-      switch (ability) {
-        case 'double jump':
-        case 'pogo':
-        case 'top bumper':
-        case 'left right bumpers':
-        case 'horizontal stretch':
-        case 'anti gravity':
-          return ''
-        default:
-          assertNever(ability, `Unhandled ability: ${ability}`)
-      }
+      // switch (ability) {
+      //   case 'double jump':
+      //   case 'triple jump':
+      //   case 'pogo':
+      //   case 'top bumper':
+      //   case 'left right bumpers':
+      //   case 'horizontal stretch':
+      //   case 'anti gravity':
+      //     return ''
+      //   default:
+      //     assertNever(ability, `Unhandled ability: ${ability}`)
+      // }
+      return ''
     })()
 
     super(scene, x, y, texture)
 
-    this.ability = ability
+    this.abilities = abilities
 
     this.startPosition = { x, y }
 
@@ -51,21 +53,12 @@ class Character extends Actor {
   }
 
   onDown() {
-    switch (this.ability) {
-      case 'horizontal stretch': {
-        this.horizontalStretchTween?.stop()
-
-        if (this.isHorizontallyStretched) {
-          this.undoStretchHorizontally()
-        } else {
-          this.stretchHorizontally()
-        }
-
-        break
-      }
-      default: {
-        this._body.setVelocityY(750)
-        break
+    if (this.abilities.includes('horizontal stretch')) {
+      this.horizontalStretchTween?.stop()
+      if (this.isHorizontallyStretched) {
+        this.undoStretchHorizontally()
+      } else {
+        this.stretchHorizontally()
       }
     }
   }

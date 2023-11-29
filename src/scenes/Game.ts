@@ -8,7 +8,7 @@ type CharacterReplayer = Replayer<Character>
 
 class Game extends BaseScene {
   private player!: Player
-  private currentAbility: Ability = 'horizontal stretch'
+  private currentAbilities: Ability[] = ['double jump', 'horizontal stretch']
   private replayers: CharacterReplayer[] = []
   private currentReplayer: CharacterReplayer | null = null
   private replays!: Phaser.Physics.Arcade.Group
@@ -44,7 +44,7 @@ class Game extends BaseScene {
       .setOrigin(0.5, 0.5)
       .setPadding(5)
 
-    this.player = new Player(this, 50, 500, this.currentAbility, {
+    this.player = new Player(this, 50, 500, this.currentAbilities, {
       up: {
         down: () => {
           this.currentReplayer?.addCommand('jump')
@@ -147,7 +147,7 @@ class Game extends BaseScene {
       this,
       this.replayStartPosition.x,
       this.replayStartPosition.y,
-      this.currentAbility,
+      this.currentAbilities,
     )
 
     // replay.setPushable(true)

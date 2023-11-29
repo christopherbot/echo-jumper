@@ -10,10 +10,10 @@ class Player extends Character {
     scene: Phaser.Scene,
     x: number,
     y: number,
-    ability: Ability,
+    abilities: Ability[],
     controlsOptions: ControlsOptions,
   ) {
-    super(scene, x, y, ability)
+    super(scene, x, y, abilities)
 
     const controls = new Controls(scene, {
       up: {
@@ -84,7 +84,7 @@ class Player extends Character {
   }
 
   private get canDoubleJump() {
-    return this.ability === 'double jump' && !this.hasDoubleJumped
+    return this.abilities.includes('double jump') && !this.hasDoubleJumped
   }
 
   resetHorizontalStretch() {
