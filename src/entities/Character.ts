@@ -2,7 +2,7 @@ import { assertNever } from '@src/utils'
 
 import Actor from './Actor'
 
-type Ability =
+export type Ability =
   | 'double jump'
   | 'pogo'
   | 'top bumper'

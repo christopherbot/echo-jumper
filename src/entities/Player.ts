@@ -1,22 +1,33 @@
 import { Controls, type ControlsOptions } from '@src/components'
 
-import Character from './Character'
+import Character, { type Ability } from './Character'
 
 class Player extends Character {
+  private ability: Ability
+  private hasDoubleJumped = false
+
   constructor(
     scene: Phaser.Scene,
     x: number,
     y: number,
+    ability: Ability,
     controlsOptions: ControlsOptions,
   ) {
-    // TODO ability
-    super(scene, x, y, 'double jump')
+    super(scene, x, y, ability)
+
+    this.ability = ability
 
     const controls = new Controls(scene, {
       up: {
         down: () => {
-          this.jump()
-          controlsOptions.up.down()
+          if (this.isTouchingDown || this.canDoubleJump) {
+            if (!this.isTouchingDown) {
+              this.hasDoubleJumped = true
+            }
+
+            this.jump()
+            controlsOptions.up.down()
+          }
         },
         up: () => {
           controlsOptions.up.up()
@@ -70,8 +81,20 @@ class Player extends Character {
     this.addComponent(controls)
   }
 
+  private get isTouchingDown() {
+    return this._body.onFloor() || this._body.touching.down
+  }
+
+  private get canDoubleJump() {
+    return this.ability === 'double jump' && !this.hasDoubleJumped
+  }
+
   update() {
     super.update()
+
+    if (this.hasDoubleJumped && this.isTouchingDown) {
+      this.hasDoubleJumped = false
+    }
   }
 }
 

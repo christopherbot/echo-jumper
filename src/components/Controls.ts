@@ -70,9 +70,9 @@ class Controls implements Component {
     return keys.some((key) => key.isDown)
   }
 
-  private isSomeKeyJustDown = (keys: Phaser.Input.Keyboard.Key[]) => {
-    return keys.some((key) => Phaser.Input.Keyboard.JustDown(key))
-  }
+  // private isSomeKeyJustDown = (keys: Phaser.Input.Keyboard.Key[]) => {
+  //   return keys.some((key) => Phaser.Input.Keyboard.JustDown(key))
+  // }
 
   private setupKeyListeners() {
     this.upKeys.forEach((upKey) => {
@@ -117,9 +117,9 @@ class Controls implements Component {
   }
 
   update() {
-    if (this.isSomeKeyJustDown(this.upKeys)) {
-      this.options.up.down()
-    }
+    // if (this.isSomeKeyJustDown(this.upKeys)) {
+    //   this.options.up.down()
+    // }
 
     if (this.isSomeKeyDown(this.downKeys)) {
       this.options.down.pressed()

@@ -40,7 +40,7 @@ class Game extends BaseScene {
       .setOrigin(0.5, 0.5)
       .setPadding(5)
 
-    this.player = new Player(this, 50, 500, {
+    this.player = new Player(this, 50, 500, 'double jump', {
       up: {
         down: () => {
           this.currentReplayer?.addCommand('jump')
