@@ -9,6 +9,8 @@ class Character extends Actor {
   private horizontalStretchTween: Phaser.Tweens.Tween | null = null
 
   protected abilities: Ability[]
+  // TRY: high gravity and high velocity for less floaty controls
+  // THOUGHT: prevent moving in x direction when jumping?
   private readonly velocityX = 250
   private readonly velocityY = 470
 
