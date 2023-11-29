@@ -98,7 +98,7 @@ class Character extends Actor {
   stretchHorizontally() {
     this.isHorizontallyStretched = true
     this._body.setAllowGravity(false)
-    this._body.setImmovable(true)
+    // this.setImmovable(true)
     this.stopMoving()
 
     this.horizontalStretchTween = this.scene.tweens.add({
@@ -125,7 +125,7 @@ class Character extends Actor {
   resetStretchProperties() {
     this.isHorizontallyStretched = false
     this._body.setAllowGravity(true)
-    this._body.setImmovable(false)
+    // this.setImmovable(false)
   }
 
   reset() {
