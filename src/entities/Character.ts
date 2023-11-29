@@ -44,6 +44,9 @@ class Character extends Actor {
   noop() {}
 
   jump() {
+    if (this.isHorizontallyStretched) {
+      this.undoStretchHorizontally()
+    }
     this._body.setVelocityY(-this.velocityY)
   }
 
@@ -53,25 +56,9 @@ class Character extends Actor {
         this.horizontalStretchTween?.stop()
 
         if (this.isHorizontallyStretched) {
-          this.resetStretchProperties()
-
-          this.horizontalStretchTween = this.scene.tweens.add({
-            targets: this,
-            scaleX: 1,
-            scaleY: 1,
-            duration: 150,
-            ease: 'Cubic.easeIn',
-          })
+          this.undoStretchHorizontally()
         } else {
-          this.onStretch()
-
-          this.horizontalStretchTween = this.scene.tweens.add({
-            targets: this,
-            scaleX: 10,
-            scaleY: 0.65,
-            duration: 150,
-            ease: 'Cubic.easeIn',
-          })
+          this.stretchHorizontally()
         }
 
         break
@@ -115,11 +102,31 @@ class Character extends Actor {
     this._body.reset(this.startPosition.x, this.startPosition.y)
   }
 
-  onStretch() {
+  stretchHorizontally() {
     this.isHorizontallyStretched = true
     this._body.setAllowGravity(false)
     this._body.setImmovable(true)
     this.stopMoving()
+
+    this.horizontalStretchTween = this.scene.tweens.add({
+      targets: this,
+      scaleX: 10,
+      scaleY: 0.65,
+      duration: 150,
+      ease: 'Cubic.easeIn',
+    })
+  }
+
+  undoStretchHorizontally() {
+    this.resetStretchProperties()
+
+    this.horizontalStretchTween = this.scene.tweens.add({
+      targets: this,
+      scaleX: 1,
+      scaleY: 1,
+      duration: 150,
+      ease: 'Cubic.easeIn',
+    })
   }
 
   resetStretchProperties() {
