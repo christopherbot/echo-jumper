@@ -5,6 +5,7 @@ import Character from './Character'
 
 class Player extends Character {
   private hasDoubleJumped = false
+  private hasTripleJumped = false
 
   constructor(
     scene: Phaser.Scene,
@@ -18,9 +19,13 @@ class Player extends Character {
     const controls = new Controls(scene, {
       up: {
         down: () => {
-          if (this.isTouchingDown || this.canDoubleJump) {
+          if (this.isTouchingDown || this.canDoubleJump || this.canTripleJump) {
             if (!this.isTouchingDown) {
-              this.hasDoubleJumped = true
+              if (this.hasDoubleJumped) {
+                this.hasTripleJumped = true
+              } else {
+                this.hasDoubleJumped = true
+              }
             }
 
             this.jump()
@@ -84,7 +89,15 @@ class Player extends Character {
   }
 
   private get canDoubleJump() {
-    return this.abilities.includes('double jump') && !this.hasDoubleJumped
+    return (
+      (this.abilities.includes('double jump') ||
+        this.abilities.includes('triple jump')) &&
+      !this.hasDoubleJumped
+    )
+  }
+
+  private get canTripleJump() {
+    return this.abilities.includes('triple jump') && !this.hasTripleJumped
   }
 
   resetHorizontalStretch() {
@@ -97,6 +110,10 @@ class Player extends Character {
 
     if (this.hasDoubleJumped && this.isTouchingDown) {
       this.hasDoubleJumped = false
+    }
+
+    if (this.hasTripleJumped && this.isTouchingDown) {
+      this.hasTripleJumped = false
     }
   }
 }

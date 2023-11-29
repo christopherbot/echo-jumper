@@ -8,7 +8,7 @@ type CharacterReplayer = Replayer<Character>
 
 class Game extends BaseScene {
   private player!: Player
-  private currentAbilities: Ability[] = ['double jump', 'horizontal stretch']
+  private currentAbilities: Ability[] = ['triple jump', 'horizontal stretch']
   private replayers: CharacterReplayer[] = []
   private currentReplayer: CharacterReplayer | null = null
   private replays!: Phaser.Physics.Arcade.Group
