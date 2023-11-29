@@ -23,6 +23,8 @@ class Game extends BaseScene {
   preload() {}
 
   create() {
+    // To prevent jitters when the player is on top of a replay
+    // see: https://github.com/photonstorm/phaser/pull/4989
     this.physics.world.fixedStep = false
 
     this.drawGrid({
