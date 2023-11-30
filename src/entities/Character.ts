@@ -10,7 +10,7 @@ class Character extends Actor {
 
   protected abilities: Ability[]
   // TRY: high gravity and high velocity for less floaty controls
-  // THOUGHT: prevent moving in x direction when jumping?
+  // THOUGHT: prevent moving in x direction when jumping? or use friction on replay?
   private readonly velocityX = 250
   private readonly velocityY = 470
 
@@ -100,13 +100,15 @@ class Character extends Actor {
   stretchHorizontally() {
     this.isHorizontallyStretched = true
     this._body.setAllowGravity(false)
-    // this.setImmovable(true)
     this.stopMoving()
 
     this.horizontalStretchTween = this.scene.tweens.add({
       targets: this,
       scaleX: 10,
-      scaleY: 0.65,
+      // TODO: I want to scale down the y slightly so it looks like
+      // the matter is shifting rather than purely growing, but upon
+      // a loop reset, the player phases through the replay.
+      // scaleY: 0.65,
       duration: 150,
       ease: 'Cubic.easeIn',
     })
@@ -127,7 +129,6 @@ class Character extends Actor {
   resetStretchProperties() {
     this.isHorizontallyStretched = false
     this._body.setAllowGravity(true)
-    // this.setImmovable(false)
   }
 
   reset() {

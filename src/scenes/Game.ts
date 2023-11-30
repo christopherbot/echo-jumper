@@ -151,7 +151,7 @@ class Game extends BaseScene {
       return
     }
 
-    // in case a direction key was being held, ensure the character
+    // In case a direction key was being held, ensure the character
     // stops at the end of a recording
     currentReplayer.addCommand('stopMovingX')
 
