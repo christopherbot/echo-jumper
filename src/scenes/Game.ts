@@ -14,6 +14,9 @@ class Game extends BaseScene {
   private replays!: Phaser.Physics.Arcade.Group
   private replayStartPosition: { x: number; y: number } = { x: 0, y: 0 }
 
+  private playerReplayCollider!: Phaser.Physics.Arcade.Collider
+  private replayReplayCollider!: Phaser.Physics.Arcade.Collider
+
   private recordingText: Phaser.GameObjects.Text | null = null
 
   constructor() {
@@ -92,9 +95,15 @@ class Game extends BaseScene {
       },
     })
 
+    // The default mass is already 1, this is here for consistency
+    // with setting the replay mass
+    // this.player.setMass(0.1)
+    // this.player.setFriction(0)
+
     this.replays = this.physics.add.group({
       allowGravity: true,
       immovable: true,
+      // immovable: false,
       collideWorldBounds: true,
     })
 
@@ -107,15 +116,79 @@ class Game extends BaseScene {
      * add custom bounds when colliding?
      */
 
+    // NOTE:
+    // In the collision callbacks below, the immovable property of each
+    // replay is being toggled depending on the interaction:
+    //
+    // - The replay should be immovable when colliding with the player to
+    //   prevent the player from being able to push it around, and instead
+    //   allow the replay to push the player around
+    // - The replay should be movable when colliding with another replay to
+    //   allow regular physics interactions between them. However, replays
+    //   that are horizontally stretched should remain immovable.
+    //
+    // See:
+    // https://www.html5gamedevs.com/topic/28876-collision-make-sprites-immovable-and-impassable/#comment-166156
+
     // allow player to collide with replays
-    this.physics.add.collider(this.player, this.replays)
+    this.playerReplayCollider = this.physics.add.collider(
+      this.player,
+      this.replays,
+      (_player, _replay) => {
+        // const replay = _replay as Character
+        // console.log('~~~ p mass', _player._body.mass)
+        // console.log('~~~ r mass', _replay._body.mass)
+        // replay.setImmovable(true)
+      },
+    )
+
     // allow replays to collide with themselves
-    this.physics.add.collider(this.replays, this.replays)
-    // this.physics.add.collider(this.replays, this.replays, (a, b) => {
-    //   console.log('~~~ replays collider')
-    //   console.log('~~~ a', a)
-    //   console.log('~~~ b', b)
-    // })
+    this.replayReplayCollider = this.physics.add.collider(
+      this.replays,
+      this.replays,
+      (_replay1, _replay2) => {
+        const replay1 = _replay1 as Character
+        const replay2 = _replay2 as Character
+
+        const i1 = this.replays
+          .getChildren()
+          .findIndex((child) => child === replay1)
+        const i2 = this.replays
+          .getChildren()
+          .findIndex((child) => child === replay2)
+
+        // console.log('~~~ replay1._body.mass', replay1._body.mass)
+        // console.log('~~~ replay2._body.mass', replay2._body.mass)
+        // console.log('~~~ i1 =', i1, '; i2 =', i2)
+
+        if (i1 > i2 && !replay1.isHorizontallyStretched) {
+          // console.log('~~~ 2 can move 1')
+          replay1.setImmovable(false)
+        }
+        if (i2 > i1 && !replay2.isHorizontallyStretched) {
+          // console.log('~~~ 1 can move 2')
+          replay2.setImmovable(false)
+        }
+        // if (replay1._body.mass > replay2._body.mass) {
+        //   console.log('~~~ replay2 -> 0')
+        //   replay2.setImmovable(false)
+        //   // replay2.setVelocity(0)
+        // } else if (replay2._body.mass > replay1._body.mass) {
+        //   replay1.setImmovable(false)
+        //   console.log('~~~ replay1 -> 0')
+        //   // replay1.setVelocity(0)
+        // }
+
+        if (!replay1.isHorizontallyStretched) {
+          // console.log('~~~ 2 can move 1')
+          // replay1.setImmovable(false)
+        }
+        if (!replay2.isHorizontallyStretched) {
+          // console.log('~~~ 1 can move 2')
+          // replay2.setImmovable(false)
+        }
+      },
+    )
 
     const spaceKey = this.input.keyboard?.addKey('SPACE')
     spaceKey?.on('down', () => {
@@ -164,10 +237,16 @@ class Game extends BaseScene {
       this.currentAbilities,
     )
 
-    // replay.setPushable(true)
-    // replay.setImmovable(true)
+    // replay.setMass(Math.pow(10, this.replays.getLength()))
 
     this.replays.add(replay)
+    // const replayCount = this.replays.getLength()
+    // this.replays.getChildren().forEach((_replay, index) => {
+    //   const replay = _replay as Character
+    //   const mass = Math.pow(1000, replayCount - index)
+    //   replay.setMass(mass)
+    //   console.log('~~~ replay._body.mass', replay._body.mass)
+    // })
 
     currentReplayer.startReplay(replay, {
       onLoopComplete: () => {
@@ -180,9 +259,15 @@ class Game extends BaseScene {
 
   update() {
     this.player.update()
+    for (const _replay of this.replays.getChildren()) {
+      const replay = _replay as Character
+      replay.setImmovable(true)
+    }
   }
 
   teardown() {
+    // this.playerReplayCollider.destroy()
+    // this.replayReplayCollider.destroy()
     this.replayers.forEach((replayer) => {
       replayer.teardown()
     })

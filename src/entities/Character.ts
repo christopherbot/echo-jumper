@@ -5,7 +5,7 @@ import Actor from './Actor'
 
 class Character extends Actor {
   private startPosition = { x: 0, y: 0 }
-  private isHorizontallyStretched = false
+  isHorizontallyStretched = false
   private horizontalStretchTween: Phaser.Tweens.Tween | null = null
 
   protected abilities: Ability[]
