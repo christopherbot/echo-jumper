@@ -22,6 +22,7 @@ export interface ControlsOptions {
   down: KeyOptions
   left: KeyOptions
   right: KeyOptions
+  r: KeyOptions
   onHorizontalNeutral: () => void
 }
 
@@ -34,6 +35,8 @@ class Controls implements Component {
   private keyS: Phaser.Input.Keyboard.Key | null = null
   private keyD: Phaser.Input.Keyboard.Key | null = null
 
+  private keyR: Phaser.Input.Keyboard.Key | null = null
+
   options: ControlsOptions
 
   constructor(scene: Phaser.Scene, options: ControlsOptions) {
@@ -43,6 +46,7 @@ class Controls implements Component {
       this.keyA = scene.input.keyboard.addKey('A')
       this.keyS = scene.input.keyboard.addKey('S')
       this.keyD = scene.input.keyboard.addKey('D')
+      this.keyR = scene.input.keyboard.addKey('R')
     }
 
     this.options = options
@@ -113,6 +117,10 @@ class Controls implements Component {
         .on('up', () => {
           this.options.right.up()
         })
+    })
+
+    this.keyR?.on('down', () => {
+      this.options.r.down()
     })
   }
 

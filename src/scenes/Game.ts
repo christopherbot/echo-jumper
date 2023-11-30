@@ -73,6 +73,20 @@ class Game extends BaseScene {
           this.currentReplayer?.addCommand('moveRight')
         },
       },
+      r: {
+        down: () => {
+          const lastReplayer = this.replayers.pop()
+          lastReplayer?.teardown()
+          const replays = this.replays.getChildren()
+
+          const lastReplay = replays.at(-1)
+          if (lastReplay) {
+            this.replays.remove(lastReplay, true, true)
+          }
+        },
+        up: () => {},
+        pressed: () => {},
+      },
       onHorizontalNeutral: () => {
         this.currentReplayer?.addCommand('stopMovingX')
       },
@@ -172,10 +186,12 @@ class Game extends BaseScene {
     this.replayers.forEach((replayer) => {
       replayer.teardown()
     })
+    this.replayers = []
     this.replays.getChildren().forEach((_replay) => {
       const replay = _replay as Character
       replay.stopMoving()
     })
+    this.replays.clear(true, true)
   }
 }
 
