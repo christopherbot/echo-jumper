@@ -46,6 +46,13 @@ class Game extends BaseScene {
     //   height: this.gameHeight,
     // })
 
+    this.add
+      .text(this.middleX, 15, '[Space]: Start/stop recording', { fontSize: 15 })
+      .setOrigin(0.5, 0)
+    this.add
+      .text(this.middleX, 30, '[r]: Remove last replay', { fontSize: 15 })
+      .setOrigin(0.5, 0)
+
     this.dotGraphics = this.add.graphics({
       fillStyle: {
         color: 0xff0000,
@@ -270,8 +277,8 @@ class Game extends BaseScene {
 
   getRandomStarPosition() {
     return {
-      x: Phaser.Math.Between(0, this.gameWidth),
-      y: Phaser.Math.Between(0, this.gameHeight / 2),
+      x: Phaser.Math.Between(30, this.gameWidth),
+      y: Phaser.Math.Between(30, this.gameHeight / 2),
     }
   }
 

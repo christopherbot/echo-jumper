@@ -52,7 +52,7 @@ class Character extends Actor {
         this.setTint(0xffff00)
         break
       case 'top bumper':
-        this.setTint(0x0000ff)
+        this.setTint(0x14ebeb)
         break
       case 'horizontal stretch':
         this.setTint(0xff0000)
