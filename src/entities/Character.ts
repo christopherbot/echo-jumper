@@ -1,5 +1,3 @@
-// import { assertNever } from '@src/utils'
-
 import type { Ability } from './Ability'
 import Actor from './Actor'
 
@@ -15,26 +13,24 @@ class Character extends Actor {
   private readonly velocityY = 470
 
   constructor(scene: Phaser.Scene, x: number, y: number, abilities: Ability[]) {
-    const texture = (() => {
-      // TODO
-      // switch (ability) {
-      //   case 'double jump':
-      //   case 'triple jump':
-      //   case 'pogo':
-      //   case 'top bumper':
-      //   case 'left right bumpers':
-      //   case 'horizontal stretch':
-      //   case 'anti gravity':
-      //     return ''
-      //   default:
-      //     assertNever(ability, `Unhandled ability: ${ability}`)
-      // }
-      return ''
-    })()
-
-    super(scene, x, y, texture)
+    super(scene, x, y, 'box')
 
     this.abilities = abilities
+    const [ability] = abilities
+    switch (ability) {
+      case 'double jump':
+        this.setTint(0x00ff00)
+        break
+      case 'triple jump':
+        this.setTint(0xffff00)
+        break
+      case 'top bumper':
+        this.setTint(0x0000ff)
+        break
+      case 'horizontal stretch':
+        this.setTint(0xff0000)
+        break
+    }
 
     this.startPosition = { x, y }
 
@@ -42,7 +38,7 @@ class Character extends Actor {
     // idle, run, jump, hit
     // this.anims.create({})
 
-    this.play('idle')
+    // this.play('idle')
   }
 
   get hasTopBumper() {
@@ -127,13 +123,14 @@ class Character extends Actor {
   }
 
   stretchHorizontally() {
+    this.setTexture('stretched-box')
     this.isHorizontallyStretched = true
     this._body.setAllowGravity(false)
     this.stopMoving()
 
     this.horizontalStretchTween = this.scene.tweens.add({
       targets: this,
-      scaleX: 10,
+      scaleX: 8,
       // TODO: I want to scale down the y slightly so it looks like
       // the matter is shifting rather than purely growing, but upon
       // a loop reset, the player phases through the replay.
@@ -152,6 +149,9 @@ class Character extends Actor {
       scaleY: 1,
       duration: 150,
       ease: 'Cubic.easeIn',
+      onComplete: () => {
+        this.setTexture('box')
+      },
     })
   }
 
