@@ -17,7 +17,7 @@ class Player extends Character {
   ) {
     super(scene, x, y, abilities)
 
-    this.jumpText = scene.add.text(0, 0, this.jumpExtra).setOrigin(0.5)
+    this.jumpText = this.scene.add.text(0, 0, this.jumpExtra).setOrigin(0.5)
 
     const controls = new Controls(scene, {
       up: {
@@ -92,6 +92,15 @@ class Player extends Character {
     })
 
     this.addComponent(controls)
+  }
+
+  setJumpText() {
+    this.jumpText?.setText(this.jumpExtra)
+  }
+
+  setAbilities(abilities: Ability[]) {
+    super.setAbilities(abilities)
+    this.setJumpText()
   }
 
   get jumpExtra() {

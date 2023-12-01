@@ -17,8 +17,34 @@ class Character extends Actor {
     super(scene, x, y, 'box')
 
     this.abilities = abilities
-    const [ability] = abilities
-    switch (ability) {
+    this._setTint()
+    this.extraText = this.scene.add.text(0, 0, this.extra).setOrigin(0.5)
+    this.startPosition = { x, y }
+
+    // TODO create anims for:
+    // idle, run, jump, hit
+    // this.anims.create({})
+
+    // this.play('idle')
+  }
+
+  get ability() {
+    return this.abilities[0]
+  }
+
+  setAbilities(abilities: Ability[]) {
+    this.abilities = abilities
+    this._setTint()
+    try {
+      this.setTexture('box')
+    } catch {
+      // noop; sometimes this fails
+    }
+    this.setExtraText()
+  }
+
+  _setTint() {
+    switch (this.ability) {
       case 'double jump':
         this.setTint(0x00ff00)
         break
@@ -32,20 +58,10 @@ class Character extends Actor {
         this.setTint(0xff0000)
         break
     }
-
-    this.extraText = scene.add.text(0, 0, this.extra).setOrigin(0.5)
-
-    this.startPosition = { x, y }
-
-    // TODO create anims for:
-    // idle, run, jump, hit
-    // this.anims.create({})
-
-    // this.play('idle')
   }
 
-  get ability() {
-    return this.abilities[0]
+  setExtraText() {
+    this.extraText?.setText(this.extra)
   }
 
   get extraXY() {
@@ -101,11 +117,11 @@ class Character extends Actor {
     if (this.isHorizontallyStretched) {
       this.undoStretchHorizontally()
     }
-    this._body.setVelocityY(-this.velocityY)
+    this._body?.setVelocityY(-this.velocityY)
   }
 
   onBumpY() {
-    this._body.setVelocityY(1.5 * -this.velocityY)
+    this._body?.setVelocityY(1.5 * -this.velocityY)
   }
 
   onDown() {
@@ -123,22 +139,22 @@ class Character extends Actor {
     if (this.isHorizontallyStretched) {
       return
     }
-    this._body.setVelocityX(-this.velocityX)
+    this._body?.setVelocityX(-this.velocityX)
   }
 
   moveRight() {
     if (this.isHorizontallyStretched) {
       return
     }
-    this._body.setVelocityX(this.velocityX)
+    this._body?.setVelocityX(this.velocityX)
   }
 
   stopMoving() {
-    this._body.setVelocity(0)
+    this._body?.setVelocity(0)
   }
 
   stopMovingX() {
-    this._body.setVelocityX(0)
+    this._body?.setVelocityX(0)
   }
 
   resetScale() {
@@ -148,13 +164,17 @@ class Character extends Actor {
   }
 
   resetPosition() {
-    this._body.reset(this.startPosition.x, this.startPosition.y)
+    this._body?.reset(this.startPosition.x, this.startPosition.y)
   }
 
   stretchHorizontally() {
-    this.setTexture('stretched-box')
+    try {
+      this.setTexture('stretched-box')
+    } catch {
+      // noop; sometimes this fails
+    }
     this.isHorizontallyStretched = true
-    this._body.setAllowGravity(false)
+    this._body?.setAllowGravity(false)
     this.stopMoving()
 
     this.horizontalStretchTween = this.scene.tweens.add({
@@ -179,14 +199,18 @@ class Character extends Actor {
       duration: 150,
       ease: 'Cubic.easeIn',
       onComplete: () => {
-        this.setTexture('box')
+        try {
+          this.setTexture('box')
+        } catch {
+          // noop; sometimes this fails
+        }
       },
     })
   }
 
   resetStretchProperties() {
     this.isHorizontallyStretched = false
-    this._body.setAllowGravity(true)
+    this._body?.setAllowGravity(true)
   }
 
   reset() {
@@ -201,6 +225,11 @@ class Character extends Actor {
     const { x, y } = this.extraXY
 
     this.extraText?.setPosition(x, y)
+  }
+
+  teardown() {
+    super.teardown()
+    this.extraText?.destroy()
   }
 }
 

@@ -1,19 +1,21 @@
 import { Replayer } from '@src/classes'
-import { Character, Player } from '@src/entities'
+import { Character, Player, Star } from '@src/entities'
 import type { Ability } from '@src/entities/Ability'
 
 import BaseScene from './BaseScene'
 
 type CharacterReplayer = Replayer<Character>
 
+const abilities: Ability[] = [
+  'double jump',
+  'triple jump',
+  'horizontal stretch',
+  'top bumper',
+]
+
 class Game extends BaseScene {
   private player!: Player
-  private currentAbilities: Ability[] = [
-    'double jump',
-    // 'triple jump',
-    // 'horizontal stretch',
-    // 'top bumper',
-  ]
+  private currentAbilities: Ability[] = []
   private replayers: CharacterReplayer[] = []
   private currentReplayer: CharacterReplayer | null = null
   private replays!: Phaser.Physics.Arcade.Group
@@ -21,7 +23,10 @@ class Game extends BaseScene {
 
   private recordingText: Phaser.GameObjects.Text | null = null
   private dotGraphics!: Phaser.GameObjects.Graphics
-  isRecording = false
+  private star!: Star
+  private isRecording = false
+  private scoreText: Phaser.GameObjects.Text | null = null
+  private score = 0
 
   constructor() {
     super('game')
@@ -58,6 +63,13 @@ class Game extends BaseScene {
     //   .setPadding(5)
     this.add.text(15, 15, this.gameTitle).setOrigin(0, 0)
 
+    this.scoreText = this.add
+      .text(this.gameWidth - 45, 15, this.scoreCopy)
+      .setOrigin(1, 0)
+
+    this.star = new Star(this, this.middleX, this.middleY)
+
+    this.currentAbilities = [this.getRandomAbility()]
     this.player = new Player(this, 50, 500, this.currentAbilities, {
       up: {
         down: () => {
@@ -118,6 +130,15 @@ class Game extends BaseScene {
      * when touching a moving replay, move the player/replay in the same direction
      * so that it sticks to them and doesn't slide out from under
      */
+
+    this.physics.add.overlap(this.player, this.star, () => {
+      this.score = this.score + 1
+      this.scoreText?.setText(this.scoreCopy)
+      const { x, y } = this.getRandomStarPosition()
+      this.star.setPosition(x, y)
+
+      this.teardown()
+    })
 
     // NOTE:
     // In the collision callbacks below, the immovable property of each
@@ -183,11 +204,17 @@ class Game extends BaseScene {
       } else {
         this.player.resetHorizontalStretch()
         this.endRecordingAndStartReplay()
+        this.currentAbilities = [this.getRandomAbility()]
+        this.player.setAbilities(this.currentAbilities)
         this.recordingText?.destroy()
         this.recordingText = null
         this.isRecording = false
       }
     })
+  }
+
+  get scoreCopy() {
+    return `Score: ${this.score}`
   }
 
   private startRecording() {
@@ -237,6 +264,17 @@ class Game extends BaseScene {
     this.currentReplayer = null
   }
 
+  getRandomAbility() {
+    return Phaser.Math.RND.pick(abilities)
+  }
+
+  getRandomStarPosition() {
+    return {
+      x: Phaser.Math.Between(0, this.gameWidth),
+      y: Phaser.Math.Between(0, this.gameHeight / 2),
+    }
+  }
+
   update() {
     this.player.update()
     this.dotGraphics.clear()
@@ -261,6 +299,7 @@ class Game extends BaseScene {
     this.replays.getChildren().forEach((_replay) => {
       const replay = _replay as Character
       replay.stopMoving()
+      replay.teardown()
     })
     this.replays.clear(true, true)
   }
