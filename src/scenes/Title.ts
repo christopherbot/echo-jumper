@@ -12,9 +12,16 @@ class Title extends BaseScene {
       frameWidth: 32,
       frameHeight: 32,
     })
+    this.load.audio('background', `audio/background.mp3`)
   }
 
   create() {
+    const backgroundMusic = this.sound.add('background', {
+      volume: 1,
+      loop: true,
+    })
+    backgroundMusic.play()
+
     this.add
       .text(
         this.middleX,
