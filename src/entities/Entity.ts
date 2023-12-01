@@ -16,6 +16,12 @@ class Entity extends Phaser.Physics.Arcade.Sprite {
       component.update()
     })
   }
+
+  teardown() {
+    this.components.forEach((component) => {
+      component.teardown()
+    })
+  }
 }
 
 export default Entity

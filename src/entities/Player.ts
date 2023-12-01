@@ -12,7 +12,7 @@ class Player extends Character {
     x: number,
     y: number,
     abilities: Ability[],
-    controlsOptions: ControlsOptions,
+    controlsOptions?: ControlsOptions,
   ) {
     super(scene, x, y, abilities)
 
@@ -29,62 +29,62 @@ class Player extends Character {
             }
 
             this.jump()
-            controlsOptions.up.down()
+            controlsOptions?.up.down()
           }
         },
         up: () => {
-          controlsOptions.up.up()
+          controlsOptions?.up.up()
         },
         pressed: () => {
-          controlsOptions.up.pressed()
+          controlsOptions?.up.pressed()
         },
       },
       down: {
         down: () => {
           this.onDown()
-          controlsOptions.down.down()
+          controlsOptions?.down.down()
         },
         up: () => {
-          controlsOptions.down.up()
+          controlsOptions?.down.up()
         },
         pressed: () => {
-          controlsOptions.down.pressed()
+          controlsOptions?.down.pressed()
         },
       },
       left: {
         down: () => {
-          controlsOptions.left.down()
+          controlsOptions?.left.down()
         },
         up: () => {
-          controlsOptions.left.up()
+          controlsOptions?.left.up()
         },
         pressed: () => {
           this.moveLeft()
-          controlsOptions.left.pressed()
+          controlsOptions?.left.pressed()
         },
       },
       right: {
         down: () => {
-          controlsOptions.right.down()
+          controlsOptions?.right.down()
         },
         up: () => {
-          controlsOptions.right.up()
+          controlsOptions?.right.up()
         },
         pressed: () => {
           this.moveRight()
-          controlsOptions.right.pressed()
+          controlsOptions?.right.pressed()
         },
       },
       r: {
         down: () => {
-          controlsOptions.r.down()
+          controlsOptions?.r.down()
         },
         up: () => {},
         pressed: () => {},
       },
       onHorizontalNeutral: () => {
         this.stopMovingX()
-        controlsOptions.onHorizontalNeutral()
+        controlsOptions?.onHorizontalNeutral()
       },
     })
 
