@@ -16,7 +16,7 @@ class Actor extends Entity {
     this._body.setCollideWorldBounds(true)
   }
 
-  protected get _body(): Phaser.Physics.Arcade.Body {
+  get _body(): Phaser.Physics.Arcade.Body {
     return this.body as Phaser.Physics.Arcade.Body
   }
 }

@@ -45,6 +45,31 @@ class Character extends Actor {
     this.play('idle')
   }
 
+  get hasTopBumper() {
+    return this.abilities.includes('top bumper')
+  }
+
+  shouldBumpSpriteOnTop(sprite: Phaser.Physics.Arcade.Sprite) {
+    if (!this.hasTopBumper) {
+      return false
+    }
+
+    // sometimes the sprite bottom is a little off (< 1px) from overlapping
+    // the character top, so accommodate with a small buffer
+    const jitterAmount = 2
+
+    // keep in mind the origins are (0.5, 0,5)
+    const isSpriteOverlappingTop =
+      sprite.y + sprite.displayHeight >= this.y - jitterAmount &&
+      sprite.y < this.y + this.displayHeight
+
+    const isSpriteWithinLeftAndRight =
+      sprite.x + sprite.displayWidth / 2 > this.x - this.displayWidth / 2 &&
+      sprite.x < this.x + this.displayWidth / 2
+
+    return isSpriteOverlappingTop && isSpriteWithinLeftAndRight
+  }
+
   noop() {}
 
   jump() {
@@ -52,6 +77,10 @@ class Character extends Actor {
       this.undoStretchHorizontally()
     }
     this._body.setVelocityY(-this.velocityY)
+  }
+
+  onBumpY() {
+    this._body.setVelocityY(1.5 * -this.velocityY)
   }
 
   onDown() {
