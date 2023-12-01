@@ -150,6 +150,26 @@ class Controls implements Component {
       }
     }
   }
+
+  teardown() {
+    this.upKeys.forEach((upKey) => {
+      upKey.removeAllListeners()
+    })
+
+    this.downKeys.forEach((downKey) => {
+      downKey.removeAllListeners()
+    })
+
+    this.leftKeys.forEach((leftKey) => {
+      leftKey.removeAllListeners()
+    })
+
+    this.rightKeys.forEach((rightKey) => {
+      rightKey.removeAllListeners()
+    })
+
+    this.keyR?.removeAllListeners()
+  }
 }
 
 export default Controls

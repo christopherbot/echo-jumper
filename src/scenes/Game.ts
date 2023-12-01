@@ -38,15 +38,16 @@ class Game extends BaseScene {
       height: this.gameHeight,
     })
 
-    this.add
-      .text(
-        this.middleX,
-        this.middleY - 100,
-        this.gameTitle,
-        this.gameTitleStyle,
-      )
-      .setOrigin(0.5, 0.5)
-      .setPadding(5)
+    // this.add
+    //   .text(
+    //     this.middleX,
+    //     this.middleY - 100,
+    //     this.gameTitle,
+    //     this.gameTitleStyle,
+    //   )
+    //   .setOrigin(0.5, 0.5)
+    //   .setPadding(5)
+    this.add.text(15, 15, this.gameTitle).setOrigin(0, 0)
 
     this.player = new Player(this, 50, 500, this.currentAbilities, {
       up: {
@@ -146,7 +147,8 @@ class Game extends BaseScene {
         const replay1Index = replays.findIndex((child) => child === replay1)
         const replay2Index = replays.findIndex((child) => child === replay2)
 
-        const canReplay1BeMoved = replay1Index > replay2Index
+        const canReplay1BeMoved =
+          replay1Index > replay2Index || replay2.isHorizontallyStretched
 
         if (canReplay1BeMoved) {
           if (!replay1.isHorizontallyStretched) {

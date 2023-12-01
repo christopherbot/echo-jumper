@@ -2,7 +2,7 @@
 import 'phaser'
 import TCRPPlugin from 'phaser3-rex-plugins/plugins/arcadetcrp-plugin.js'
 
-import { Game } from './scenes'
+import { Game, Instructions, Title } from './scenes'
 
 const config: Phaser.Types.Core.GameConfig = {
   title: 'Github Game Off 2023',
@@ -11,7 +11,7 @@ const config: Phaser.Types.Core.GameConfig = {
   width: 800,
   height: 600,
   backgroundColor: '#300000',
-  scene: [Game],
+  scene: [Title, Instructions, Game],
   render: { pixelArt: false, antialias: true },
   canvasStyle: `margin: 0;`,
   physics: {

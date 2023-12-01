@@ -166,11 +166,6 @@ class Character extends Actor {
     this.resetPosition()
     this.resetStretchProperties()
   }
-
-  teardown() {
-    // this.resetPosition()
-    // this.destroy()
-  }
 }
 
 export default Character
