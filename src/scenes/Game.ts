@@ -1,24 +1,32 @@
 import { Replayer } from '@src/classes'
-import { Character, Player } from '@src/entities'
+import { Character, Player, Star } from '@src/entities'
 import type { Ability } from '@src/entities/Ability'
 
 import BaseScene from './BaseScene'
 
 type CharacterReplayer = Replayer<Character>
 
+const abilities: Ability[] = [
+  'double jump',
+  'triple jump',
+  'horizontal stretch',
+  'top bumper',
+]
+
 class Game extends BaseScene {
   private player!: Player
-  private currentAbilities: Ability[] = [
-    'triple jump',
-    'horizontal stretch',
-    'top bumper',
-  ]
+  private currentAbilities: Ability[] = []
   private replayers: CharacterReplayer[] = []
   private currentReplayer: CharacterReplayer | null = null
   private replays!: Phaser.Physics.Arcade.Group
   private replayStartPosition: { x: number; y: number } = { x: 0, y: 0 }
 
   private recordingText: Phaser.GameObjects.Text | null = null
+  private dotGraphics!: Phaser.GameObjects.Graphics
+  private star!: Star
+  private isRecording = false
+  private scoreText: Phaser.GameObjects.Text | null = null
+  private score = 0
 
   constructor() {
     super('game')
@@ -31,11 +39,24 @@ class Game extends BaseScene {
     // see: https://github.com/photonstorm/phaser/pull/4989
     this.physics.world.fixedStep = false
 
-    this.drawGrid({
-      x: 0,
-      y: 0,
-      width: this.gameWidth,
-      height: this.gameHeight,
+    // this.drawGrid({
+    //   x: 0,
+    //   y: 0,
+    //   width: this.gameWidth,
+    //   height: this.gameHeight,
+    // })
+
+    this.add
+      .text(this.middleX, 15, '[Space]: Start/stop recording', { fontSize: 15 })
+      .setOrigin(0.5, 0)
+    this.add
+      .text(this.middleX, 30, '[r]: Remove last replay', { fontSize: 15 })
+      .setOrigin(0.5, 0)
+
+    this.dotGraphics = this.add.graphics({
+      fillStyle: {
+        color: 0xff0000,
+      },
     })
 
     // this.add
@@ -49,6 +70,13 @@ class Game extends BaseScene {
     //   .setPadding(5)
     this.add.text(15, 15, this.gameTitle).setOrigin(0, 0)
 
+    this.scoreText = this.add
+      .text(this.gameWidth - 45, 15, this.scoreCopy)
+      .setOrigin(1, 0)
+
+    this.star = new Star(this, this.middleX, this.middleY)
+
+    this.currentAbilities = [this.getRandomAbility()]
     this.player = new Player(this, 50, 500, this.currentAbilities, {
       up: {
         down: () => {
@@ -110,6 +138,15 @@ class Game extends BaseScene {
      * so that it sticks to them and doesn't slide out from under
      */
 
+    this.physics.add.overlap(this.player, this.star, () => {
+      this.score = this.score + 1
+      this.scoreText?.setText(this.scoreCopy)
+      const { x, y } = this.getRandomStarPosition()
+      this.star.setPosition(x, y)
+
+      this.teardown()
+    })
+
     // NOTE:
     // In the collision callbacks below, the immovable property of each
     // replay is being toggled depending on the interaction:
@@ -169,13 +206,22 @@ class Game extends BaseScene {
     spaceKey?.on('down', () => {
       if (!this.currentReplayer) {
         this.startRecording()
-        this.recordingText = this.add.text(6, 20, 'Recording')
+        this.recordingText = this.add.text(0, 0, 'Rec').setOrigin(0, 1)
+        this.isRecording = true
       } else {
         this.player.resetHorizontalStretch()
         this.endRecordingAndStartReplay()
+        this.currentAbilities = [this.getRandomAbility()]
+        this.player.setAbilities(this.currentAbilities)
         this.recordingText?.destroy()
+        this.recordingText = null
+        this.isRecording = false
       }
     })
+  }
+
+  get scoreCopy() {
+    return `Score: ${this.score}`
   }
 
   private startRecording() {
@@ -225,11 +271,30 @@ class Game extends BaseScene {
     this.currentReplayer = null
   }
 
+  getRandomAbility() {
+    return Phaser.Math.RND.pick(abilities)
+  }
+
+  getRandomStarPosition() {
+    return {
+      x: Phaser.Math.Between(30, this.gameWidth),
+      y: Phaser.Math.Between(30, this.gameHeight / 2),
+    }
+  }
+
   update() {
     this.player.update()
+    this.dotGraphics.clear()
+    if (this.isRecording) {
+      this.recordingText?.setPosition(this.player.x + 5, this.player.y - 15)
+      this.dotGraphics.fillCircleShape(
+        new Phaser.Geom.Circle(this.player.x + 45, this.player.y - 24, 5),
+      )
+    }
     for (const _replay of this.replays.getChildren()) {
       const replay = _replay as Character
       replay.setImmovable(true)
+      replay.update()
     }
   }
 
@@ -241,6 +306,7 @@ class Game extends BaseScene {
     this.replays.getChildren().forEach((_replay) => {
       const replay = _replay as Character
       replay.stopMoving()
+      replay.teardown()
     })
     this.replays.clear(true, true)
   }

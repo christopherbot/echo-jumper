@@ -6,6 +6,7 @@ import Character from './Character'
 class Player extends Character {
   private hasDoubleJumped = false
   private hasTripleJumped = false
+  jumpText: Phaser.GameObjects.Text | null = null
 
   constructor(
     scene: Phaser.Scene,
@@ -15,6 +16,8 @@ class Player extends Character {
     controlsOptions?: ControlsOptions,
   ) {
     super(scene, x, y, abilities)
+
+    this.jumpText = this.scene.add.text(0, 0, this.jumpExtra).setOrigin(0.5)
 
     const controls = new Controls(scene, {
       up: {
@@ -91,6 +94,26 @@ class Player extends Character {
     this.addComponent(controls)
   }
 
+  setJumpText() {
+    this.jumpText?.setText(this.jumpExtra)
+  }
+
+  setAbilities(abilities: Ability[]) {
+    super.setAbilities(abilities)
+    this.setJumpText()
+  }
+
+  get jumpExtra() {
+    switch (this.ability) {
+      case 'double jump':
+        return this.hasDoubleJumped ? '0' : '1'
+      case 'triple jump':
+        return this.hasTripleJumped ? '0' : this.hasDoubleJumped ? '1' : '2'
+      default:
+        return ''
+    }
+  }
+
   private get isTouchingDown() {
     return this._body.onFloor() || this._body.touching.down
   }
@@ -115,6 +138,9 @@ class Player extends Character {
   update() {
     super.update()
 
+    this.jumpText?.setPosition(this.x, this.y)
+    this.jumpText?.setText(this.jumpExtra)
+
     if (this.hasDoubleJumped && this.isTouchingDown) {
       this.hasDoubleJumped = false
     }
@@ -122,6 +148,11 @@ class Player extends Character {
     if (this.hasTripleJumped && this.isTouchingDown) {
       this.hasTripleJumped = false
     }
+  }
+
+  teardown() {
+    super.teardown()
+    this.jumpText?.destroy()
   }
 }
 

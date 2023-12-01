@@ -64,6 +64,7 @@ class Instructions extends BaseScene {
       this.player.destroy(true)
       this.collider?.destroy()
     }
+    this.player?.teardown()
     this.player = new Player(this, x, y, [ability])
     this.collider = this.physics.add.collider(
       this.player,
@@ -180,13 +181,6 @@ class Instructions extends BaseScene {
   }
 
   create() {
-    // this.drawGrid({
-    //   x: 0,
-    //   y: 0,
-    //   width: this.gameWidth,
-    //   height: this.gameHeight,
-    // })
-
     this.add.text(15, 15, this.gameTitle).setOrigin(0, 0)
 
     const enterCopy = 'Press [Enter] to play'
@@ -213,7 +207,7 @@ class Instructions extends BaseScene {
     this.add.text(this.middleX, textY, 'Instructions').setOrigin(0.5, 0.5)
 
     const instructions = [
-      "It's simple - reach the goal.",
+      "It's simple - reach the goal. Over and over.",
       "You're given control of one box at a time.",
       '',
       'Record your movements,',

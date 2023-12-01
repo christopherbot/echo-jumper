@@ -5,7 +5,14 @@ class Title extends BaseScene {
     super('title')
   }
 
-  preload() {}
+  preload() {
+    this.load.image('box', 'images/box.png')
+    this.load.image('stretched-box', 'images/stretched-box.png')
+    this.load.spritesheet('star', 'images/star.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+    })
+  }
 
   create() {
     this.add
