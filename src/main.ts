@@ -5,7 +5,7 @@ import TCRPPlugin from 'phaser3-rex-plugins/plugins/arcadetcrp-plugin.js'
 import { Game, Instructions, Title } from './scenes'
 
 const config: Phaser.Types.Core.GameConfig = {
-  title: 'Github Game Off 2023',
+  title: 'Echo Jumper',
   type: Phaser.AUTO,
   parent: 'app',
   width: 800,
