@@ -64,6 +64,7 @@ class Instructions extends BaseScene {
       this.player.destroy(true)
       this.collider?.destroy()
     }
+    this.player?.teardown()
     this.player = new Player(this, x, y, [ability])
     this.collider = this.physics.add.collider(
       this.player,
@@ -213,7 +214,7 @@ class Instructions extends BaseScene {
     this.add.text(this.middleX, textY, 'Instructions').setOrigin(0.5, 0.5)
 
     const instructions = [
-      "It's simple - reach the goal.",
+      "It's simple - reach the goal. Over and over.",
       "You're given control of one box at a time.",
       '',
       'Record your movements,',

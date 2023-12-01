@@ -149,6 +149,11 @@ class Player extends Character {
       this.hasTripleJumped = false
     }
   }
+
+  teardown() {
+    super.teardown()
+    this.jumpText?.destroy()
+  }
 }
 
 export default Player
