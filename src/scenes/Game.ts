@@ -92,15 +92,9 @@ class Game extends BaseScene {
       },
     })
 
-    // The default mass is already 1, this is here for consistency
-    // with setting the replay mass
-    // this.player.setMass(0.1)
-    // this.player.setFriction(0)
-
     this.replays = this.physics.add.group({
       allowGravity: true,
       immovable: true,
-      // immovable: false,
       collideWorldBounds: true,
     })
 
@@ -109,8 +103,6 @@ class Game extends BaseScene {
      *
      * when touching a moving replay, move the player/replay in the same direction
      * so that it sticks to them and doesn't slide out from under
-     *
-     * add custom bounds when colliding?
      */
 
     // NOTE:
@@ -206,16 +198,7 @@ class Game extends BaseScene {
       this.currentAbilities,
     )
 
-    // replay.setMass(Math.pow(10, this.replays.getLength()))
-
     this.replays.add(replay)
-    // const replayCount = this.replays.getLength()
-    // this.replays.getChildren().forEach((_replay, index) => {
-    //   const replay = _replay as Character
-    //   const mass = Math.pow(1000, replayCount - index)
-    //   replay.setMass(mass)
-    //   console.log('~~~ replay._body.mass', replay._body.mass)
-    // })
 
     currentReplayer.startReplay(replay, {
       onLoopComplete: () => {
