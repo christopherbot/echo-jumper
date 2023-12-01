@@ -9,6 +9,7 @@ class Character extends Actor {
   protected abilities: Ability[]
   // TRY: high gravity and high velocity for less floaty controls
   // THOUGHT: prevent moving in x direction when jumping? or use friction on replay?
+  // THOUGHT: add movement tracking lines to replays?
   private readonly velocityX = 250
   private readonly velocityY = 470
   extraText: Phaser.GameObjects.Text | null = null
