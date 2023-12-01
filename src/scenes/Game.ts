@@ -39,12 +39,12 @@ class Game extends BaseScene {
     // see: https://github.com/photonstorm/phaser/pull/4989
     this.physics.world.fixedStep = false
 
-    this.drawGrid({
-      x: 0,
-      y: 0,
-      width: this.gameWidth,
-      height: this.gameHeight,
-    })
+    // this.drawGrid({
+    //   x: 0,
+    //   y: 0,
+    //   width: this.gameWidth,
+    //   height: this.gameHeight,
+    // })
 
     this.dotGraphics = this.add.graphics({
       fillStyle: {

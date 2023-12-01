@@ -181,13 +181,6 @@ class Instructions extends BaseScene {
   }
 
   create() {
-    // this.drawGrid({
-    //   x: 0,
-    //   y: 0,
-    //   width: this.gameWidth,
-    //   height: this.gameHeight,
-    // })
-
     this.add.text(15, 15, this.gameTitle).setOrigin(0, 0)
 
     const enterCopy = 'Press [Enter] to play'
