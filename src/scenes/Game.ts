@@ -8,7 +8,11 @@ type CharacterReplayer = Replayer<Character>
 
 class Game extends BaseScene {
   private player!: Player
-  private currentAbilities: Ability[] = ['triple jump', 'horizontal stretch']
+  private currentAbilities: Ability[] = [
+    'triple jump',
+    'horizontal stretch',
+    'top bumper',
+  ]
   private replayers: CharacterReplayer[] = []
   private currentReplayer: CharacterReplayer | null = null
   private replays!: Phaser.Physics.Arcade.Group
@@ -121,8 +125,13 @@ class Game extends BaseScene {
 
     // allow player to collide with replays
     this.physics.add.collider(this.player, this.replays, (_player, _replay) => {
+      const player = _player as Player
       const replay = _replay as Character
       replay.setImmovable(true)
+
+      if (replay.shouldBumpSpriteOnTop(player)) {
+        player.onBumpY()
+      }
     })
 
     // allow replays to collide with themselves
@@ -142,6 +151,9 @@ class Game extends BaseScene {
         if (canReplay1BeMoved) {
           if (!replay1.isHorizontallyStretched) {
             replay1.setImmovable(false)
+            if (replay2.shouldBumpSpriteOnTop(replay1)) {
+              replay1.onBumpY()
+            }
           }
         } else {
           if (!replay2.isHorizontallyStretched) {
@@ -198,6 +210,8 @@ class Game extends BaseScene {
       this.currentAbilities,
     )
 
+    // THOUGHT: add more gravity for each replay index so later replays
+    // fall faster?
     this.replays.add(replay)
 
     currentReplayer.startReplay(replay, {
