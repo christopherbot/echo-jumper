@@ -73,6 +73,20 @@ class Game extends BaseScene {
           this.currentReplayer?.addCommand('moveRight')
         },
       },
+      r: {
+        down: () => {
+          const lastReplayer = this.replayers.pop()
+          lastReplayer?.teardown()
+          const replays = this.replays.getChildren()
+
+          const lastReplay = replays.at(-1)
+          if (lastReplay) {
+            this.replays.remove(lastReplay, true, true)
+          }
+        },
+        up: () => {},
+        pressed: () => {},
+      },
       onHorizontalNeutral: () => {
         this.currentReplayer?.addCommand('stopMovingX')
       },
@@ -89,19 +103,53 @@ class Game extends BaseScene {
      *
      * when touching a moving replay, move the player/replay in the same direction
      * so that it sticks to them and doesn't slide out from under
-     *
-     * add custom bounds when colliding?
      */
 
+    // NOTE:
+    // In the collision callbacks below, the immovable property of each
+    // replay is being toggled depending on the interaction:
+    //
+    // - A replay should be immovable when colliding with the player to prevent
+    //   the player from being able to push it around, and instead allow the
+    //   replay to push the player around
+    // - A replay should be movable when colliding with another replay that was
+    //   created before it. However, replays that are horizontally stretched
+    //   should always be immovable.
+    //
+    // See:
+    // https://www.html5gamedevs.com/topic/28876-collision-make-sprites-immovable-and-impassable/#comment-166156
+
     // allow player to collide with replays
-    this.physics.add.collider(this.player, this.replays)
+    this.physics.add.collider(this.player, this.replays, (_player, _replay) => {
+      const replay = _replay as Character
+      replay.setImmovable(true)
+    })
+
     // allow replays to collide with themselves
-    this.physics.add.collider(this.replays, this.replays)
-    // this.physics.add.collider(this.replays, this.replays, (a, b) => {
-    //   console.log('~~~ replays collider')
-    //   console.log('~~~ a', a)
-    //   console.log('~~~ b', b)
-    // })
+    this.physics.add.collider(
+      this.replays,
+      this.replays,
+      (_replay1, _replay2) => {
+        const replays = this.replays.getChildren()
+        const replay1 = _replay1 as Character
+        const replay2 = _replay2 as Character
+
+        const replay1Index = replays.findIndex((child) => child === replay1)
+        const replay2Index = replays.findIndex((child) => child === replay2)
+
+        const canReplay1BeMoved = replay1Index > replay2Index
+
+        if (canReplay1BeMoved) {
+          if (!replay1.isHorizontallyStretched) {
+            replay1.setImmovable(false)
+          }
+        } else {
+          if (!replay2.isHorizontallyStretched) {
+            replay2.setImmovable(false)
+          }
+        }
+      },
+    )
 
     const spaceKey = this.input.keyboard?.addKey('SPACE')
     spaceKey?.on('down', () => {
@@ -137,7 +185,7 @@ class Game extends BaseScene {
       return
     }
 
-    // in case a direction key was being held, ensure the character
+    // In case a direction key was being held, ensure the character
     // stops at the end of a recording
     currentReplayer.addCommand('stopMovingX')
 
@@ -149,9 +197,6 @@ class Game extends BaseScene {
       this.replayStartPosition.y,
       this.currentAbilities,
     )
-
-    // replay.setPushable(true)
-    // replay.setImmovable(true)
 
     this.replays.add(replay)
 
@@ -166,16 +211,22 @@ class Game extends BaseScene {
 
   update() {
     this.player.update()
+    for (const _replay of this.replays.getChildren()) {
+      const replay = _replay as Character
+      replay.setImmovable(true)
+    }
   }
 
   teardown() {
     this.replayers.forEach((replayer) => {
       replayer.teardown()
     })
+    this.replayers = []
     this.replays.getChildren().forEach((_replay) => {
       const replay = _replay as Character
       replay.stopMoving()
     })
+    this.replays.clear(true, true)
   }
 }
 

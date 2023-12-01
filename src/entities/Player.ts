@@ -75,6 +75,13 @@ class Player extends Character {
           controlsOptions.right.pressed()
         },
       },
+      r: {
+        down: () => {
+          controlsOptions.r.down()
+        },
+        up: () => {},
+        pressed: () => {},
+      },
       onHorizontalNeutral: () => {
         this.stopMovingX()
         controlsOptions.onHorizontalNeutral()
