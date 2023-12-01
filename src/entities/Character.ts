@@ -11,6 +11,7 @@ class Character extends Actor {
   // THOUGHT: prevent moving in x direction when jumping? or use friction on replay?
   private readonly velocityX = 250
   private readonly velocityY = 470
+  extraText: Phaser.GameObjects.Text | null = null
 
   constructor(scene: Phaser.Scene, x: number, y: number, abilities: Ability[]) {
     super(scene, x, y, 'box')
@@ -32,6 +33,8 @@ class Character extends Actor {
         break
     }
 
+    this.extraText = scene.add.text(0, 0, this.extra).setOrigin(0.5)
+
     this.startPosition = { x, y }
 
     // TODO create anims for:
@@ -39,6 +42,32 @@ class Character extends Actor {
     // this.anims.create({})
 
     // this.play('idle')
+  }
+
+  get ability() {
+    return this.abilities[0]
+  }
+
+  get extraXY() {
+    switch (this.ability) {
+      case 'top bumper':
+        return { x: this.x, y: this.y - 10 }
+      case 'horizontal stretch':
+        return { x: this.x, y: this.y + 10 }
+      default:
+        return { x: this.x, y: this.y }
+    }
+  }
+
+  get extra() {
+    switch (this.ability) {
+      case 'top bumper':
+        return '↥'
+      case 'horizontal stretch':
+        return '↔'
+      default:
+        return ''
+    }
   }
 
   get hasTopBumper() {
@@ -165,6 +194,13 @@ class Character extends Actor {
     this.resetScale()
     this.resetPosition()
     this.resetStretchProperties()
+  }
+
+  update() {
+    super.update()
+    const { x, y } = this.extraXY
+
+    this.extraText?.setPosition(x, y)
   }
 }
 

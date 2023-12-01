@@ -9,9 +9,10 @@ type CharacterReplayer = Replayer<Character>
 class Game extends BaseScene {
   private player!: Player
   private currentAbilities: Ability[] = [
-    'triple jump',
-    'horizontal stretch',
-    'top bumper',
+    'double jump',
+    // 'triple jump',
+    // 'horizontal stretch',
+    // 'top bumper',
   ]
   private replayers: CharacterReplayer[] = []
   private currentReplayer: CharacterReplayer | null = null
@@ -19,6 +20,8 @@ class Game extends BaseScene {
   private replayStartPosition: { x: number; y: number } = { x: 0, y: 0 }
 
   private recordingText: Phaser.GameObjects.Text | null = null
+  private dotGraphics!: Phaser.GameObjects.Graphics
+  isRecording = false
 
   constructor() {
     super('game')
@@ -36,6 +39,12 @@ class Game extends BaseScene {
       y: 0,
       width: this.gameWidth,
       height: this.gameHeight,
+    })
+
+    this.dotGraphics = this.add.graphics({
+      fillStyle: {
+        color: 0xff0000,
+      },
     })
 
     // this.add
@@ -169,11 +178,14 @@ class Game extends BaseScene {
     spaceKey?.on('down', () => {
       if (!this.currentReplayer) {
         this.startRecording()
-        this.recordingText = this.add.text(6, 20, 'Recording')
+        this.recordingText = this.add.text(0, 0, 'Rec').setOrigin(0, 1)
+        this.isRecording = true
       } else {
         this.player.resetHorizontalStretch()
         this.endRecordingAndStartReplay()
         this.recordingText?.destroy()
+        this.recordingText = null
+        this.isRecording = false
       }
     })
   }
@@ -227,9 +239,17 @@ class Game extends BaseScene {
 
   update() {
     this.player.update()
+    this.dotGraphics.clear()
+    if (this.isRecording) {
+      this.recordingText?.setPosition(this.player.x + 5, this.player.y - 15)
+      this.dotGraphics.fillCircleShape(
+        new Phaser.Geom.Circle(this.player.x + 45, this.player.y - 24, 5),
+      )
+    }
     for (const _replay of this.replays.getChildren()) {
       const replay = _replay as Character
       replay.setImmovable(true)
+      replay.update()
     }
   }
 
